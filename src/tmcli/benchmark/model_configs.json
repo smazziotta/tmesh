@@ -1,0 +1,67 @@
+[
+    {
+        "model_name": "openai/gpt-oss-120b",
+        "tensorParallelSize": 1,
+        "cpuOffloadingBufferSize": "100Gi",
+        "diskOffloadingBufferSize": "0Gi",
+        "remoteOffloadingBufferSize": "0Gi",
+        "num_key_value_heads": 8,
+        "head_dim": 64,
+        "layers": 36,
+        "dtype_size": 2,
+        "_calculation": "2 * num_key_value_heads * head_dim * layers * dtype_size",
+        "bytes_per_tok": "73728"
+    },
+    {
+        "model_name": "openai/gpt-oss-20b",
+        "tensorParallelSize": 1,
+        "cpuOffloadingBufferSize": "100",
+        "diskOffloadingBufferSize": "0",
+        "remoteOffloadingBufferSize": "0",
+        "num_key_value_heads": 8,
+        "head_dim": 64,
+        "layers": 24,
+        "dtype_size": 2,
+        "_calculation": "2 * num_key_value_heads * head_dim * layers * dtype_size",
+        "bytes_per_tok": "49152"
+    },
+    {
+        "model_name": "Qwen/Qwen3-235B-A22B-Instruct-2507-FP8",
+        "tensorParallelSize": 8,
+        "cpuOffloadingBufferSize": "100",
+        "diskOffloadingBufferSize": "0",
+        "remoteOffloadingBufferSize": "0",
+        "num_key_value_heads": 4,
+        "head_dim": 128,
+        "layers": 94,
+        "dtype_size": 2,
+        "_calculation": "2 * num_key_value_heads * head_dim * layers * dtype_size",
+        "bytes_per_tok": "96256"
+    },
+    {
+        "model_name": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+        "tensorParallelSize": 8,
+        "cpuOffloadingBufferSize": "100",
+        "diskOffloadingBufferSize": "0",
+        "remoteOffloadingBufferSize": "0",
+        "num_key_value_heads": 8,
+        "head_dim": 128,
+        "layers": 62,
+        "dtype_size": 2,
+        "_calculation": "2 * num_key_value_heads * head_dim * layers * dtype_size",
+        "bytes_per_tok": "253952"
+    },
+    {
+        "model_name": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+        "tensorParallelSize": 1,
+        "cpuOffloadingBufferSize": "100",
+        "diskOffloadingBufferSize": "0",
+        "remoteOffloadingBufferSize": "0",
+        "num_key_value_heads": 4,
+        "head_dim": 128,
+        "layers": 48,
+        "dtype_size": 2,
+        "_calculation": "2 * num_key_value_heads * head_dim * layers * dtype_size",
+        "bytes_per_tok": "98304"
+    }
+    ]
