@@ -6,7 +6,10 @@ pip install tmesh
 
 # CLI Tree
 
-## 1. `tmesh-cli benchmark --endpoint "<YOUR_OPEN_AI_API_ENDPOINT>" --api-key "<OPTIONAL_API_KEY>"`
+## 1. tmesh-cli benchmark
+
+Format: 
+`tmesh-cli benchmark --endpoint "<YOUR_OPEN_AI_API_ENDPOINT>" --api-key "<OPTIONAL_API_KEY>"`
 
 Example: 
 
