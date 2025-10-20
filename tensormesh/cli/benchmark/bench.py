@@ -164,7 +164,7 @@ class WorkloadConfig:
         # we will create a workload that maximally stresses a buffer of size
         # max(cpu size * TP, disk size * TP, remote size)
         model = WorkloadConfig._find_model(endpoint, api_key)
-        with importlib.resources.files("tmcli.benchmark").joinpath("model_configs.json").open("r") as f:
+        with importlib.resources.files("tensormesh.cli.benchmark").joinpath("model_configs.json").open("r") as f:
             model_configs = json.load(f)
             for model_config in model_configs:
                 if model_config["model_name"] == model:

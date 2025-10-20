@@ -1,17 +1,16 @@
 # Installation
 
 ```python
-pip install tm-cli
+pip install tmesh
 ```
 
-# CLI Tree Overview
+# CLI Tree
 
-1. `tm-cli benchmark`
-2. ...
+## 1. `tmesh-cli benchmark --endpoint "<YOUR_OPEN_AI_API_ENDPOINT>" --api-key "<OPTIONAL_API_KEY>"`
 
-## 1. TensorMesh SaaS Cost-Saving Benchmark
+Example: 
 
-`tm-cli benchmark --endpoint "http://89.169.111.29:30080/" --api-key "vllm_sk_555a1b7ff3e0f617b1240375ea411c2a5f08d2666fcdc718075f66c9"`
+`tmesh-cli benchmark --endpoint "http://89.169.111.29:30080/" --api-key "vllm_sk_555a1b7ff3e0f617b1240375ea411c2a5f08d2666fcdc718075f66c9"`
 
 The model at the endpoint will automatically be discovered and the benchmark will run ad infinitum. 
 
@@ -62,4 +61,4 @@ Interval Average Prefill Throughput: 25740.820827727515
 Interval Average Decode Throughput: 90.82104365217528
 ```
 
-## 2. ...
+## 2. 

@@ -1,5 +1,5 @@
 import argparse
-from tmcli.benchmark.bench import run_benchmark
+from tensormesh.cli.benchmark.bench import run_benchmark
 
 def main():
     parser = argparse.ArgumentParser(prog="tm-cli")
