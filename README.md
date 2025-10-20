@@ -1,6 +1,13 @@
-# CLI Tree
+# Installation
 
-All utilities branch from `tm-cli`
+```python
+pip install tm-cli
+```
+
+# CLI Tree Overview
+
+1. `tm-cli benchmark`
+2. ...
 
 ## 1. TensorMesh SaaS Cost-Saving Benchmark
 
@@ -54,3 +61,5 @@ Interval Average ITL: 0.012132209007956864
 Interval Average Prefill Throughput: 25740.820827727515
 Interval Average Decode Throughput: 90.82104365217528
 ```
+
+## 2. ...
