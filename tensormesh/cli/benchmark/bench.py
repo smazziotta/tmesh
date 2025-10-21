@@ -255,8 +255,10 @@ def url_reduce(endpoint: str) -> str:
     # example 4: http://localhost:8000/v1/chat/completions
     # example 4.1: http://localhost:8000/v1/chat/completions/
     # Ensure scheme
-    if not endpoint.startswith(("http://", "https://")):
-        endpoint = "https://" + endpoint
+    if endpoint.startswith("https://"):
+        endpoint = endpoint.replace("https://", "http://")
+    if not endpoint.startswith(("http://")):
+        endpoint = "http://" + endpoint
 
     parsed = urlparse(endpoint)
     scheme = parsed.scheme
