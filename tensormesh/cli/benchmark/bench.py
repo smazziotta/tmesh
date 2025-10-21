@@ -1,4 +1,5 @@
 import sys
+import signal
 from dataclasses import dataclass
 from openai import OpenAI, AsyncOpenAI, APIConnectionError
 import asyncio
@@ -29,6 +30,7 @@ class DecodePairs:
 class ObservabilityPanel: 
     def __init__(self, workload_config: "WorkloadConfig"): 
         print(
+            f"\n\n\nNOTE: tmesh-cli benchmark will run forever until you interrupt the process.\n\n\n"
             f"Workload Specifications:\n"
             f"Model: {workload_config.model_name}\n"
             f"Number of Contexts: {workload_config.num_contexts}\n"
@@ -276,4 +278,36 @@ def run_benchmark(args):
     print(f"normalized endpoint: {endpoint}")
     workload_config = WorkloadConfig.from_endpoint(endpoint, api_key)
     workload_generator = WorkloadGenerator(workload_config, endpoint, api_key)
-    asyncio.run(workload_generator.infinitely_benchmark())
+
+    async def main():
+        try:
+            await workload_generator.infinitely_benchmark()
+        except asyncio.CancelledError:
+            print("\n[INFO] Cancelled benchmark tasks.")
+        finally:
+            print("[INFO] Benchmark stopped gracefully.")
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    # Define shutdown handler
+    def handle_signal():
+        print("\n[INFO] Received termination signal. Stopping benchmark...")
+        for task in asyncio.all_tasks(loop):
+            task.cancel()
+
+    # Register signal handlers
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        try:
+            loop.add_signal_handler(sig, handle_signal)
+        except NotImplementedError:
+            # Windows fallback
+            signal.signal(sig, lambda s, f: asyncio.create_task(shutdown(loop)))
+
+    try:
+        loop.run_until_complete(main())
+    except KeyboardInterrupt:
+        print("\n[INFO] Keyboard interrupt received. Exiting...")
+    finally:
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        loop.close()
