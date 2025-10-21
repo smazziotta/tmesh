@@ -6,7 +6,7 @@ import importlib.resources
 import json
 import random
 import time
-import argparse
+from urllib.parse import urlparse, urlunparse
 
 @dataclass
 class RequestStats: 
@@ -71,7 +71,8 @@ class ObservabilityPanel:
                 await asyncio.sleep(self.log_update_interval)
                 continue
             interval_ttft = sum(prefill_pair.prefill_time for prefill_pair in self.interval_prefill_stats) / len(self.interval_prefill_stats)
-            interval_itl = sum(decode_pair.decode_time / decode_pair.output_length for decode_pair in self.interval_decode_stats) / len(self.interval_decode_stats)
+            # + 1 for EOS token
+            interval_itl = sum(decode_pair.decode_time / (decode_pair.output_length + 1) for decode_pair in self.interval_decode_stats) / len(self.interval_decode_stats)
             interval_prefill_throughput = sum(prefill_pair.input_length / prefill_pair.prefill_time for prefill_pair in self.interval_prefill_stats) / len(self.interval_prefill_stats)
             interval_decode_throughput = sum(decode_pair.output_length / decode_pair.decode_time for decode_pair in self.interval_decode_stats) / len(self.interval_decode_stats)
             old_weight, new_weight = self.num_requests / total_requests, self.interval_requests / total_requests
@@ -243,18 +244,42 @@ class WorkloadGenerator:
             future = asyncio.create_task(self.process_single_prompt(context + question))
             future.add_done_callback(lambda _: self.sem.release())
 
+def url_reduce(endpoint: str) -> str: 
+    # we want to accept any open ai endpoint
+    # example 1: http://localhost:8000
+    # example 1.1: http://localhost:8000/
+    # example 2: http://localhost:8000/v1
+    # example 2.1: http://localhost:8000/v1/
+    # example 3: http://localhost:8000/v1/completions
+    # example 3.1: http://localhost:8000/v1/completions/
+    # example 4: http://localhost:8000/v1/chat/completions
+    # example 4.1: http://localhost:8000/v1/chat/completions/
+    # Ensure scheme
+    if not endpoint.startswith(("http://", "https://")):
+        endpoint = "https://" + endpoint
+
+    parsed = urlparse(endpoint)
+    scheme = parsed.scheme
+    netloc = parsed.netloc or parsed.path  # handles bare host:port inputs
+    path = parsed.path.rstrip("/")    
+    # Ensure /v1 suffix
+    if not path.endswith("/v1"):
+        path = path + "/v1"
+
+    # Always end with /
+    if not path.endswith("/"):
+        path += "/"
+
+    normalized = urlunparse((scheme, netloc, "", "", ""))
+    return normalized
+
 def run_benchmark(args):
     endpoint = args.endpoint
     api_key = args.api_key
-    if not endpoint.endswith("v1") and not endpoint.endswith("v1/"):
-        if endpoint.endswith("/"):
-            endpoint += "v1/"
-        else:
-            endpoint += "/v1/"
-    if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
-        endpoint = "https://" + endpoint
     print(f"endpoint: {endpoint}")
     print(f"api_key: {api_key}")
+    endpoint = url_reduce(endpoint)
+    print(f"normalized endpoint: {endpoint}")
     workload_config = WorkloadConfig.from_endpoint(endpoint, api_key)
     workload_generator = WorkloadGenerator(workload_config, endpoint, api_key)
     asyncio.run(workload_generator.infinitely_benchmark())
