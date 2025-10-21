@@ -1,6 +1,6 @@
 import sys
 from dataclasses import dataclass
-from openai import OpenAI, AsyncOpenAI
+from openai import OpenAI, AsyncOpenAI, APIConnectionError
 import asyncio
 import importlib.resources
 import json
@@ -261,16 +261,8 @@ def url_reduce(endpoint: str) -> str:
     parsed = urlparse(endpoint)
     scheme = parsed.scheme
     netloc = parsed.netloc or parsed.path  # handles bare host:port inputs
-    path = parsed.path.rstrip("/")    
-    # Ensure /v1 suffix
-    if not path.endswith("/v1"):
-        path = path + "/v1"
-
-    # Always end with /
-    if not path.endswith("/"):
-        path += "/"
-
-    normalized = urlunparse((scheme, netloc, "", "", ""))
+    # Ensure /v1/ suffix
+    normalized = urlunparse((scheme, netloc, "/v1/", "", "", ""))
     return normalized
 
 def run_benchmark(args):
